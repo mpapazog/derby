@@ -20,13 +20,14 @@
 #  script will assume the scoreboard application is running on the same computer (IP: 127.0.0.1).
 #
 # Using the API/integrating with TV broadcast systems:
-#  Once the script is running, it will publish a simple REST API with two calls:
+#  Once the script is running, it will present a simple REST API with two calls:
 #   GET http://<script_ip_address>:5000/register
-#    Use this call once to initialize connectivity to the scoreboard application and create a session key
+#       Use this call once to initialize connectivity to the scoreboard application and create a session key
 #   GET http://<script_ip_address>:5000/status
-#    Use this call to get the current gamestate in JSON form. If there are no errors, the script will return the whole
-#    game state every time. See the GAMESTATE global variable below for the format of the JSON object.
-#  Both of the calls work without parameters. Substitute <script_ip_address> for th
+#       Use this call to get the current gamestate in JSON form. If there are no errors, the script will return the whole
+#       game state every time. See the GAMESTATE global variable below for the format of the JSON object.
+#  Both of the calls work without parameters. Substitute <script_ip_address> for the IP address of the computer where
+#   this script is running.
 #
 # Caveats:
 #  * When running multiple games in a row with the same scoreboard computer, quit and restart the script after every game
