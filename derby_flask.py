@@ -33,7 +33,7 @@
 #  * When running multiple games in a row with the same scoreboard computer, quit and restart the script after every game
 #    to avoid JamScores being wrong on the first jam of the subsequent games.
 #
-# This file was last modified on 2018-07-09
+# This file was last modified on 2018-07-16
 
 
 import sys, getopt, requests, json
@@ -45,26 +45,32 @@ REQUESTS_CONNECT_TIMEOUT = 3
 REQUESTS_READ_TIMEOUT    = 3
 
 GAMESTATE = {
-        'Error': 'none',
-        'ClockPeriodRunning': 'false',
-        'ClockPeriodTime': '30:00',
-        'ClockPeriodNumber':0,
-        'ClockJamRunning': 'false',
-        'ClockJamTime': '02:00',
-        'ClockJamNumber':0,
-        'ClockLineupRunning': 'false',
-        'ClockLineupTime': '00:00',
-        'ClockLineupNumber':0,
-        'ClockIntermissionRunning': 'false',
-        'ClockIntermissionTime': '15:00',
-        'ClockIntermissionNumber':0,
-        'ClockTimeoutRunning': 'false',
-        'ClockTimeoutTime': '01:00',
-        'ClockTimeoutNumber':0,
-        'Team1Score':0,
-        'Team1Jamscore':0,
-        'Team2Score':0,
-        'Team2Jamscore':0} 
+        'Error'                     : None,
+        'ClockPeriodRunning'        : False,
+        'ClockPeriodTime'           : '30:00',
+        'ClockPeriodNumber'         : 0,
+        'ClockJamRunning'           : False,
+        'ClockJamTime'              : '02:00',
+        'ClockJamNumber'            : 0,
+        'ClockLineupRunning'        : False,
+        'ClockLineupTime'           : '00:00',
+        'ClockLineupNumber'         : 0,
+        'ClockIntermissionRunning'  : False,
+        'ClockIntermissionTime'     : '15:00',
+        'ClockIntermissionNumber'   : 0,
+        'ClockTimeoutRunning'       : False,
+        'ClockTimeoutTime'          : '01:00',
+        'ClockTimeoutNumber'        : 0,
+        'Team1LeadJammer'           : False,
+        'Team1Score'                : 0,
+        'Team1Jamscore'             : 0,
+        'Team1JammerName'           : None,
+        'Team1JammerNumber'         : None,
+        'Team2LeadJammer'           : False,
+        'Team2Score'                : 0,
+        'Team2Jamscore'             : 0,
+        'Team2JammerName'           : None,
+        'Team2JammerNumber'         : None} 
 
 LASTSCORE = {'1':0, '2':0}        
         
@@ -85,7 +91,7 @@ def registertoscoreboard(p_server):
     
 def getgameinfo(p_server, p_sessionkey):
     r = requests.get('http://%s:8000/XmlScoreBoard/get?key=%s' % (p_server, p_sessionkey), timeout=(REQUESTS_CONNECT_TIMEOUT, REQUESTS_READ_TIMEOUT))
-    
+            
     if r.status_code != requests.codes.ok:
         return (None)
             
@@ -124,7 +130,7 @@ def status():
         for clock in root.iter('Clock'):
             clockid = clock.get('Id')
             for elem in clock.iter('Running'):
-                GAMESTATE['Clock' + clockid + 'Running'] = elem.text
+                GAMESTATE['Clock' + clockid + 'Running'] = (elem.text == 'true')
             for elem in clock.iter('Time'):
                 seconds=int(int(elem.text)/1000)
                 m, s = divmod(seconds, 60)
@@ -143,6 +149,16 @@ def status():
             for elem in team.iter('Score'):
                 GAMESTATE['Team' + teamid + 'Score'] = int(elem.text)
                 GAMESTATE['Team' + teamid + 'Jamscore'] = GAMESTATE['Team' + teamid + 'Score'] - LASTSCORE[teamid]
+            for elem in team.iter('LeadJammer'):
+                GAMESTATE['Team' + teamid + 'LeadJammer'] = (elem.text == 'Lead')
+            for position in team.iter('Position'):
+                positionid = position.get('Id')
+                if positionid == 'Jammer':
+                    for jname in position.iter('Name'):
+                        GAMESTATE['Team' + teamid + 'JammerName'] = jname.text
+                    for jnumber in position.iter('Number'):
+                        GAMESTATE['Team' + teamid + 'JammerNumber'] = jnumber.text
+                    break
         
     return (jsonify(GAMESTATE))   
 
