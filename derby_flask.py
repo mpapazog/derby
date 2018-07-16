@@ -1,5 +1,5 @@
 # This is a script to integrate the CRG Derby Scoreboard application to TV broadcasts via a simple
-#  JSON API. More information on the CRG Derby Scoreboard application here:
+#  REST/JSON API. More information on the CRG Derby Scoreboard application here:
 #  https://sourceforge.net/projects/derbyscoreboard/
 #
 # Installation:
@@ -36,7 +36,7 @@
 # This file was last modified on 2018-07-16
 
 
-import sys, getopt, requests, json
+import sys, getopt, requests
 import xml.etree.ElementTree as ET
 from flask import Flask, jsonify
 
