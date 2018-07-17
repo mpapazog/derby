@@ -29,11 +29,15 @@
 #  Both of the calls work without parameters. Substitute <script_ip_address> for the IP address of the computer where
 #   this script is running.
 #
+# Notes:
+#  * Fields 'TeamXJammerName' and 'TeamXJammerNumber' return data for the player currently acting as the jammer. In star pass
+#    situations they return the pivot-turned-jammer's name and number.
+#
 # Caveats:
 #  * When running multiple games in a row with the same scoreboard computer, quit and restart the script after every game
 #    to avoid JamScores being wrong on the first jam of the subsequent games.
 #
-# This file was last modified on 2018-07-16
+# This file was last modified on 2018-07-17
 
 
 import sys, getopt, requests
@@ -66,15 +70,26 @@ GAMESTATE = {
         'Team1Jamscore'             : 0,
         'Team1JammerName'           : None,
         'Team1JammerNumber'         : None,
+        'Team1StarPass'             : False,
         'Team2LeadJammer'           : False,
         'Team2Score'                : 0,
         'Team2Jamscore'             : 0,
         'Team2JammerName'           : None,
-        'Team2JammerNumber'         : None} 
+        'Team2JammerNumber'         : None,
+        'Team2StarPass'             : False}
+        
+JAMMER_PIVOT_DATA = {
+        'Team1JammerName'           : None,
+        'Team1JammerNumber'         : None,
+        'Team1PivotName'            : None,
+        'Team1PivotNumber'          : None,
+        'Team2JammerName'           : None,
+        'Team2JammerNumber'         : None,
+        'Team1PivotName'            : None,
+        'Team1PivotNumber'          : None}
 
 LASTSCORE = {'1':0, '2':0}        
-        
-        
+          
 SESSIONKEY = 'none'
 
 SERVER = '127.0.0.1'
@@ -91,6 +106,9 @@ def registertoscoreboard(p_server):
     
 def getgameinfo(p_server, p_sessionkey):
     r = requests.get('http://%s:8000/XmlScoreBoard/get?key=%s' % (p_server, p_sessionkey), timeout=(REQUESTS_CONNECT_TIMEOUT, REQUESTS_READ_TIMEOUT))
+    
+    #DEBUG
+    print(r.text)
             
     if r.status_code != requests.codes.ok:
         return (None)
@@ -116,6 +134,7 @@ def register():
 def status():
     global GAMESTATE
     global LASTSCORE
+    global JAMMER_PIVOT_DATA
         
     if SESSIONKEY == 'none':
         return (jsonify({'Error':'Not registered'}))
@@ -151,15 +170,27 @@ def status():
                 GAMESTATE['Team' + teamid + 'Jamscore'] = GAMESTATE['Team' + teamid + 'Score'] - LASTSCORE[teamid]
             for elem in team.iter('LeadJammer'):
                 GAMESTATE['Team' + teamid + 'LeadJammer'] = (elem.text == 'Lead')
+            for elem in team.iter('StarPass'):
+                GAMESTATE['Team' + teamid + 'StarPass'] = (elem.text == 'true')
             for position in team.iter('Position'):
                 positionid = position.get('Id')
-                if positionid == 'Jammer':
+                if positionid == 'Jammer': 
                     for jname in position.iter('Name'):
-                        GAMESTATE['Team' + teamid + 'JammerName'] = jname.text
+                        JAMMER_PIVOT_DATA['Team' + teamid + 'JammerName'] = jname.text
                     for jnumber in position.iter('Number'):
-                        GAMESTATE['Team' + teamid + 'JammerNumber'] = jnumber.text
-                    break
-        
+                        JAMMER_PIVOT_DATA['Team' + teamid + 'JammerNumber'] = jnumber.text
+                if positionid == 'Pivot':
+                    for jname in position.iter('Name'):
+                        JAMMER_PIVOT_DATA['Team' + teamid + 'PivotName']    = jname.text
+                    for jnumber in position.iter('Number'):
+                        JAMMER_PIVOT_DATA['Team' + teamid + 'PivotNumber']  = jnumber.text
+            if not GAMESTATE['Team' + teamid + 'StarPass']:
+                GAMESTATE['Team' + teamid + 'JammerName']   = JAMMER_PIVOT_DATA['Team' + teamid + 'JammerName']
+                GAMESTATE['Team' + teamid + 'JammerNumber'] = JAMMER_PIVOT_DATA['Team' + teamid + 'JammerNumber']
+            else:
+                GAMESTATE['Team' + teamid + 'JammerName']   = JAMMER_PIVOT_DATA['Team' + teamid + 'PivotName']
+                GAMESTATE['Team' + teamid + 'JammerNumber'] = JAMMER_PIVOT_DATA['Team' + teamid + 'PivotNumber']
+                    
     return (jsonify(GAMESTATE))   
 
 
