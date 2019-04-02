@@ -1,0 +1,1109 @@
+<!-- Javascript/Websocket/jQuery based roller derby scoreboard overlay for CRG 3.9.5 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scoreboard overlay</title>
+    
+    <style>
+                
+    .chroma-key {
+        background-color: transparent;
+    }
+    
+    .font_style {
+      font-family: "Verdana", Sans-serif;
+      font-weight: "bold";
+    }
+        
+    .bgcolour-default {
+        background-color: #0196b6;
+    }
+    
+    .font-colour-default{
+        color: white;    
+    }    
+    
+    .colour-scheme-clockface {
+        background-color: #101010;
+        color: white;    
+    }
+        
+    .team_panel {
+        width:  324px;
+        height: 60px;
+        line-height: 60px;
+        position: inherit;
+    }
+        
+    .team1_panel_position {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    
+    .team2_panel_position {
+      position: absolute;
+      top: 70px;
+      left: 10px;
+    }
+    
+    .team_logo {
+      width: 60px;
+      height: 60px;
+      position: inherit;
+      background-size: 100% 100%;
+    }
+    
+    .team_colour {
+      width: 24px;
+      height: 60px;
+      position: inherit;
+      left: 60px;
+    }
+        
+    .team_name {
+      width: 180px;
+      height: 60px;
+      position: inherit;
+      left: 84px;
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    .team_score {
+      width: 120px;
+      height: 60px;
+      position: inherit;
+      left: 254px;
+      font-size: 48px;
+      text-align: center;
+    }
+    
+    .team_lead {
+      width: 10px;
+      height: 10px;
+      position: inherit;
+      left: 62px;
+      top: 0px;
+      font-size: 24px;
+      font-family: "Arial", Sans-serif;
+      text-shadow: 2px 2px grey;
+      text-align: center;
+      line-height: 60px;
+    }
+    
+    .team_info_popup {
+        width:  000px;
+        height: 56px;
+        left: 384px;
+        font-size: 20px;
+        text-align: center;
+        line-height: 56px;
+    }
+    
+    
+    .team1_info_popup_position {
+        position: absolute;
+        top: 13px;
+    }
+    
+    .team2_info_popup_position {
+        position: absolute;
+        top: 73px;
+    }
+    
+    .clock_panel {
+        width:  160px;
+        height: 60px;
+        line-height: 60px;
+    }
+    
+    .period_panel_position {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    
+    .jam_panel_position {
+      position: absolute;
+      top: 70px;
+      right: 10px;
+    }
+    
+    .clock_face {
+        width: 100px;
+        height:60px;
+        right: 0px;
+        position: inherit;
+        font-size: 24px;
+        text-align: center;
+    }
+    
+    .clock_label {
+        width: 60px;
+        position: inherit;
+        right: 100px;
+        font-size: 24px;
+        text-align: center;
+    }
+    
+    .vert_align_middle {
+        line-height: 60px;
+    }
+    
+    .lineup_popup {
+        width:  156px;
+        height: 000px;
+        font-size: 20px;
+        position: absolute;
+        right: 12px;
+        top: 130px;
+        text-align: center;
+        line-height: 40px;
+    }
+    
+    
+    .center {
+        text-align: center;
+    }
+        
+    .timeout_banner {
+        position:absolute;
+        width: 100%;
+    }
+    
+    .timeout_banner_shard_1 {
+        height:20px;
+        left: 0px;
+        bottom: 260px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_2 {
+        position:absolute;
+        height:22px;
+        right: 0px;
+        bottom: 240px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_3 {
+        position:absolute;
+        height:22px;
+        left: 0px;
+        bottom: 220px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_4 {
+        position:absolute;
+        height:22px;
+        right: 0px;
+        bottom: 200px;
+        width: 0%;
+    }
+    
+    .timeout_text_container {
+        text-align:center;
+        position:absolute;
+        bottom:200px;
+        left:0px;
+        width:100%;
+    }
+    
+    .timeout_banner_text {
+      font-size: 36px;
+      line-height: 80px;
+      display:inline-block;
+    }
+    
+    .sponsor_banner {
+        position:absolute;
+        width: 100%;
+    }
+    
+    .sponsor_banner_shard_1 {
+        height:60px;
+        left: 0px;
+        bottom: 130px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_2 {
+        position:absolute;
+        height:42px;
+        right: 0px;
+        bottom: 90px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_3 {
+        position:absolute;
+        height:42px;
+        left: 0px;
+        bottom: 50px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_4 {
+        position:absolute;
+        height:42px;
+        right: 0px;
+        bottom: 10px;
+        width: 0%;
+    }
+    
+    .sponsor_text_container {
+        text-align:center;
+        position:absolute;
+        bottom:20px;
+        left:0px;
+        height:160px;
+        width:100%;
+    }
+    
+    .sponsor_banner_text {
+      font-size: 60px;
+      line-height: 160px;
+      display:inline-block;
+    }
+    
+            
+    </style>
+
+</head>
+<body class="chroma-key">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type=text/javascript>
+    
+        // TODO: Investigate & possibly fix bug where timeout/sponsor banners persist between games
+        // TODO: Thoroughly test OT/TT/OR scheduler
+        // TODO: add option for halftime banner
+    
+    
+            // MODIFY THESE VARIABLES TO CHANGE SCRIPT BEHAVIOUR
+        var SCORE_SERVER_IP     = '127.0.0.1', // change this to set scoreboard server IP address
+            SCORE_SERVER_PORT   = '8000', // change this to set scoreboard server TCP port (default: 8000)
+            
+            // modify this to subscribe to a wider or narrower set of scoreboard updates
+            // scoreboardInterestingPaths = ["ScoreBoard"] <== subscribes to more or less everything
+            scoreboardInterestingPaths = [ "ScoreBoard" ],
+            
+            gameHasTimeoutSponsors = true,
+            gameHasHalftimeBanners = true,
+            sponsorContentHtml = '<table style="display:inline-block;"><tr><td><img height="150" src="/img/logo_atom_big.jpg"/></td><td><img height="150" src="/img/wikko.jpg"/></td><td><img height="150" src="/img/jitb.png"/></td></tr></table>',
+            
+            // modify these to statically set team names
+            teamName                    = { '1':'', '2':'' },
+            getTeamNameFromScoreboard   = { '1':true,'2':true },
+            
+            // modify these to auto-resolve team names to custom values
+            teamShortNames = {'Glasgow Mens Roller Derby':'GMRD',
+                              'Dirty River Roller Derby':'TURKU',
+                              'Black':'HOWLIN',
+                              'White':'LEEDS'};
+            
+            autoLoadTeamLogosBasedOnTeamName = true,           
+            teamDefaultLogo             = { '1':'/img/team1.png','2':'/img/team2.jpg' },
+            
+            autoLoadTeamColoursBasedOnTeamName = true, 
+            team1DefaultColour = 'black',
+            team2DefaultColour = 'white',
+            team1DefaultStarColour = 'white',
+            team1DefaultStarColour = 'black',
+            doColourLogoBackgrounds = true,
+            // Use HTML colour names: https://www.w3schools.com/colors/colors_names.asp
+            // transparent, black, white, blue, chocolate, blueviolet, darkblue, crimson, forestgreen, mediumaquamarine, orchid, yellow
+            logoBackgroundDefaultColour = 'white',
+            //teamColourMappings = {'teamname':{'teamColour':'colour1', 'starColour':'colour2'}, ...};
+            teamColourMappings = {  'BLACK':    {'teamColour':'black',          'starColour':'white'},
+                                    'WHITE':    {'teamColour':'white',          'starColour':'black'},
+                                    'KALLIO':   {'teamColour':'black',          'starColour':'white'},
+                                    'HELSINKI': {'teamColour':'yellow',         'starColour':'black'},
+                                    'TURKU':    {'teamColour':'mediumaquamarine', 'starColour':'white'},
+                                    'PORVOO':   {'teamColour':'darkblue',       'starColour':'white'},
+                                    'OULU':     {'teamColour':'white',          'starColour':'black'},
+                                    'TAMPERE':  {'teamColour':'crimson',        'starColour':'white'},
+                                    'HOWLIN':   {'teamColour':'white',          'starColour':'black'},
+                                    'LEEDS':    {'teamColour':'white',          'starColour':'black'},
+                                    'ROYAL A':  {'teamColour':'gold',           'starColour':'black'},
+                                    'ROYAL B':  {'teamColour':'darkolivegreen', 'starColour':'black'},
+                                    'MANNEKEN': {'teamColour':'purple',         'starColour':'white'}};
+                
+            // DO NOT MODIFY THESE VARIABLES
+        var team1IsLead     = false,
+            team1WasLead    = false,
+            team2IsLead     = false,
+            team2WasLead    = false,
+            teamJamScore    = {'1':0, '2':0},
+            clockJamRunning = false,
+            clockLineUpRunning  = false,
+            clockTimeoutRunning = false,
+            clockIntermissionRunning = false,
+            showingOfficialScore = false,
+            periodTimeLeft = 1800000,
+            
+            currentJammerId = {'1':'', '2':''},
+            currentPivotId  = {'1':'', '2':''},
+            showingJamPoints = {'team1':false, 'team2':false},
+            
+            currentJamNumber        = 0,
+            currentPeriodNumber     = 0,
+            gotStarPassThisJam      = false,
+            gotFirstJamNumberUpdate = false,
+            gotSecondJamNumberUpdate = false,
+            
+            teamTimeoutsRemaining   = {'1':3, '2':3 },
+            showingOfficialReview   = false,
+            showingTeamTimeout      = {'1':false,
+                                       '2':false },
+            
+            bannerGotRequestShowTimeout         = false,
+            bannerGotRequestShowTeamTimeout     = false,
+            bannerGotRequestShowOfficialReview  = false,
+            bannerGotRequestTeam                = '0',
+                                    
+            skaterDb    = { '1': [], '2': []};
+          
+          
+        function debugDump(text) {
+            var message = document.createElement('p');
+            var content = document.createTextNode('_______________________________ ' + text);
+            message.appendChild(content);
+            document.body.appendChild(message); 
+        }
+        
+        function debugDumpJson(obj) {
+            $.each(obj, function (k, v) {
+                debugDump(k + ' : ' + v);
+            });
+        }
+        
+        function autoFetchTeamLogo(teamName, teamNumber, fallBackLogo) {
+            var teamNameLowerCase = teamName.toLowerCase().replace(/\s+/g, '_');        
+            var image_url = "/img/" + teamNameLowerCase + ".jpg";
+            $.get(image_url)
+                .done(function() { 
+                    $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                  
+                }).fail(function() { 
+                    image_url = "/img/" + teamNameLowerCase + ".png";
+                    $.get(image_url)
+                        .done(function() { 
+                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');               
+                        }).fail(function() { 
+                            image_url = "/img/" + teamNameLowerCase + ".gif";
+                            $.get(image_url)
+                                .done(function() { 
+                                    $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                    
+                                }).fail(function() { 
+                                    image_url = "/img/" + teamNameLowerCase + ".bmp";
+                                    $.get(image_url)
+                                        .done(function() { 
+                                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                     
+                                        }).fail(function() { 
+                                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + fallBackLogo + ')');  
+                                        })
+                                })
+                        })
+                })
+        }
+        
+        
+        function getSkaterInfo(id, team) {
+            for (i = 0; i < skaterDb[team].length; i++) {
+                if (skaterDb[team][i]['SkaterId'] == id) {   
+                    return skaterDb[team][i];
+                }
+            }
+            return null;
+        }
+        
+        function parseFieldsFromKey (key) {
+            var splitStr = key.split('.');
+            var ret = {};
+            
+            for(i=0;i<splitStr.length;i++) {
+                var value       = null;
+                var valueStart  = splitStr[i].indexOf('(') + 1;
+                var indexEnd    = splitStr[i].length;
+                if (valueStart != 0) {
+                    var valueLength = splitStr[i].length - valueStart - 1;
+                    value       = splitStr[i].substr(valueStart, valueLength);
+                    indexEnd    = valueStart - 1;
+                }
+                var index = splitStr[i].substr(0, indexEnd);
+                ret[index] = value;
+                ret['LastKey'] = index; // note what was the final section of the key. This is usually the important one
+            }
+            
+            return(ret);
+        }
+        
+        function fancyTimeFormat(time)
+            {   
+                // Hours, minutes and seconds
+                var hrs = ~~(time / 3600);
+                var mins = ~~((time % 3600) / 60);
+                var secs = ~~time % 60;
+
+                // Output like "1:01" or "4:03:59" or "123:03:59"
+                var ret = "";
+
+                if (hrs > 0) {
+                    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+
+                ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+                ret += "" + secs;
+                return ret;
+            };
+                        
+        var score = {
+            ws:          null,     // Websocket will be placed here
+            isNotDead:   false,    // true if no Ping-Pong events have been missed
+            
+            initialize: function() {
+                score.ws = null;
+                score.ws = new WebSocket("ws://" + SCORE_SERVER_IP + ":" + SCORE_SERVER_PORT +"/WS/");
+                
+                score.ws.onmessage = function (event) {
+                    $.each(JSON.parse(event.data), function( index, record ) {                          
+                        switch (index) {
+                            case 'state': // got a scoreboard state change update. Reflect in overlay
+                                $.each(record, function( key, value ) {                    
+                                    switch (key) { // key: scoreboard element that has been updated
+                                        case 'ScoreBoard.Clock(Jam).Time':
+                                            $('#jamClock').html(fancyTimeFormat(value/1000));
+                                            break;
+                                        case 'ScoreBoard.Clock(Period).Time':
+                                            $('#periodClock').html(fancyTimeFormat(value/1000));
+                                            periodTimeLeft = value;
+                                            break;
+                                        case 'ScoreBoard.Clock(Lineup).Time':
+                                            if(clockLineUpRunning) {
+                                                $('#jamClock').html(fancyTimeFormat(value/1000));
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Timeout).Time':
+                                            $('#jamClock').html(fancyTimeFormat(value/1000));
+                                            break;
+                                        case 'ScoreBoard.Clock(Intermission).Time':
+                                            // don't show countdown at end of game
+                                            if(clockIntermissionRunning && currentPeriodNumber<2) {
+                                                $('#jamClock').html(fancyTimeFormat(value/1000));
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Jam).Number': 
+                                            $('#jamNumber').html('J' + value);
+                                            currentJamNumber = value;
+                                            gotSecondJamNumberUpdate = gotFirstJamNumberUpdate; // make sure two jam # updates have been recv before playing points per jam animation
+                                            gotFirstJamNumberUpdate  = true;
+                                            gotStarPassThisJam  = false; // ignore 'StarPass: false' update, if it comes at beginning of jam
+                                            if (currentJamNumber == 0) {
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Period).Number':    
+                                            $('#periodNumber').html('P' + value);
+                                            currentPeriodNumber = value;
+                                            break;
+                                        case 'ScoreBoard.Team(1).Score': 
+                                        case 'ScoreBoard.Team(2).Score':   
+                                            var teamNumber = key[16];
+                                            $('#team' + teamNumber + 'Score').html(value);
+                                            break;
+                                        case 'ScoreBoard.Team(1).JamScore':
+                                        case 'ScoreBoard.Team(2).JamScore':  
+                                            var teamNumber = key[16];
+                                            teamJamScore[teamNumber] = value;
+                                            if (showingJamPoints['team'+teamNumber]){
+                                                $('#team' + teamNumber + 'InfoText').html('( +' + teamJamScore[teamNumber] + ' )');
+                                            }
+                                            break;    
+                                        case 'ScoreBoard.Team(1).LeadJammer':
+                                            if (value == 'Lead') {
+                                                team1IsLead = true;
+                                            } else {
+                                                team1IsLead = false;
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Team(2).LeadJammer':
+                                            if (value == 'Lead') {
+                                                team2IsLead = true;
+                                            } else {
+                                                team2IsLead = false;
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Jam).Running':
+                                            if (!value) {
+                                                clockJamRunning = false;
+                                                team1IsLead = false;
+                                                team2IsLead = false;
+                                                if (gotSecondJamNumberUpdate) { // first update comes at ws registration. second+ are actual updates
+                                                    enqueueAnimation('team1', 'show', '15', true, '( +' + teamJamScore['1'] + ' )');
+                                                    enqueueAnimation('team2', 'show', '15', true, '( +' + teamJamScore['2'] + ' )');
+                                                }
+                                            } else {
+                                                clockJamRunning = true;
+                                                if (clockLineUpRunning || clockTimeoutRunning || clockIntermissionRunning) {
+                                                    clockTimeoutRunning = false;
+                                                    clockLineUpRunning  = false;
+                                                    clockIntermissionRunning  = false;
+                                                    enqueueAnimation('clock', 'hide', '0', false, '');
+                                                }
+                                                showingOfficialScore = false;
+                                                showingOfficialReview = false;
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');                                  
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Lineup).Running':
+                                            if (value == true) {
+                                                clockLineUpRunning = true;
+                                                if (animationQueue['clock']['open']) {
+                                                    enqueueAnimation('clock', 'hide', '0', false, '');
+                                                }
+                                                enqueueAnimation('clock', 'show', '0', false, 'LINE UP');
+                                                showingOfficialScore = false;
+                                                showingOfficialReview = false;
+                                                enqueueAnimation('timeout', 'hide', '0', false, ''); 
+                                            } else if (!clockTimeoutRunning && !clockIntermissionRunning){
+                                                clockLineUpRunning = false;
+                                                enqueueAnimation('clock', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Timeout).Running':
+                                            if (value) {
+                                                clockTimeoutRunning = true;
+                                                if (animationQueue['clock']['open']) {
+                                                    enqueueAnimation('clock', 'hide', '0', false, '');
+                                                }
+                                                enqueueAnimation('clock', 'show', '0', false, 'TIMEOUT');
+                                                bannerGotRequestShowTimeout = true;
+                                            } else if (!clockLineUpRunning && !clockIntermissionRunning) {
+                                                clockTimeoutRunning = false;
+                                                enqueueAnimation('clock', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Clock(Intermission).Running':
+                                            if (value) {
+                                                clockIntermissionRunning = true;
+                                                if (animationQueue['clock']['open']) {
+                                                    enqueueAnimation('clock', 'hide', '0', false, '');
+                                                }                                                
+                                                if (currentJamNumber==0 && currentPeriodNumber<2) {
+                                                    enqueueAnimation('clock', 'show', '0', false, 'STAND BY');
+                                                } else if (currentPeriodNumber=='1'){
+                                                    enqueueAnimation('clock', 'show', '0', false, 'HALFTIME');
+													if(gameHasHalftimeBanners){
+														enqueueAnimation('timeout', 'show', '0', false, 'Halftime');
+													}
+                                                } else { // in overtime: set clock display to zero with no banner
+                                                    $('#jamClock').html('0:00');
+                                                }
+                                            } else if (!clockLineUpRunning && !clockTimeoutRunning) {
+                                                clockIntermissionRunning = false;
+                                                $('#jamClock').html('0:00');
+                                                enqueueAnimation('clock', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Team(1).InTimeout':
+                                        case 'ScoreBoard.Team(2).InTimeout':
+                                            var teamNumber = key[16];
+                                            if (value) {
+                                                bannerGotRequestShowTeamTimeout = true;
+                                                bannerGotRequestTeam = teamNumber;
+                                            } else if (showingTeamTimeout[teamNumber]){
+                                                showingTeamTimeout[teamNumber] = false;
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Team(1).Timeouts':
+                                        case 'ScoreBoard.Team(2).Timeouts':
+                                            var teamNumber = key[16];
+                                            teamTimeoutsRemaining[teamNumber] = value;
+                                            if (showingTeamTimeout[teamNumber]) {
+                                                $('#timeoutBannerText').html('Team timeout for ' + teamName[teamNumber] + '. Remaining: ' + teamTimeoutsRemaining[teamNumber]);
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Team(1).InOfficialReview':
+                                        case 'ScoreBoard.Team(2).InOfficialReview':
+                                            var teamNum = key[16];
+                                            if (value) {
+                                                bannerGotRequestShowOfficialReview = true;
+                                                bannerGotRequestTeam = teamNum;
+                                            }
+                                            break;
+                                        case 'ScoreBoard.Team(1).Name':
+                                        case 'ScoreBoard.Team(2).Name':
+                                            var teamNum = key[16];
+                                            if (getTeamNameFromScoreboard[teamNum]) {
+                                                if (value in teamShortNames) {
+                                                    teamName[teamNum] = teamShortNames[value];
+                                                } else {
+                                                    teamName[teamNum] = value.split(' ')[0].toUpperCase();
+                                                }
+                                                $('#team' + teamNum + 'Name').html(teamName[teamNum].substr(0,9));
+                                                if (autoLoadTeamLogosBasedOnTeamName) {
+                                                    autoFetchTeamLogo(teamName[teamNum], teamNum, teamDefaultLogo[teamNum]);
+                                                }
+                                                if (autoLoadTeamColoursBasedOnTeamName) {
+                                                    if (teamName[teamNum] in teamColourMappings) {
+                                                        $("#team" + teamNum + "Colour").css("background-color", teamColourMappings[teamName[teamNum]]['teamColour']);
+                                                        $("#team" + teamNum + "Lead").css("color", teamColourMappings[teamName[teamNum]]['starColour']);
+                                                        if(doColourLogoBackgrounds) {
+                                                            $("#team" + teamNum + "Logo").css("background-color", teamColourMappings[teamName[teamNum]]['teamColour']);
+                                                        }
+                                                    } else {
+                                                        $("#team" + teamNum + "Colour").css("background-color", "transparent");
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case 'ScoreBoard.InPeriod':
+                                            if (!value && !showingOfficialScore && periodTimeLeft == 0 && currentPeriodNumber == 2 && !(clockLineUpRunning || clockTimeoutRunning)) {
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');
+                                                enqueueAnimation('timeout', 'show', '0', false, 'Unofficial score');         
+                                            }
+                                            break;
+                                        case 'ScoreBoard.OfficialScore':
+                                            if (value) {
+                                                showingOfficialScore = true;
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');
+                                                enqueueAnimation('timeout', 'show', '0', false, 'Official score');
+                                            }
+                                            break;
+                                        case 'ScoreBoard.InOvertime':
+                                            if (value) {
+                                                showingOfficialScore = false;
+                                                $('#periodClock').html('Over');
+                                                enqueueAnimation('timeout', 'hide', '0', false, '');
+                                            }
+                                            break;
+                                        default:
+                                            //code to build skater database
+                                            if (key.startsWith('ScoreBoard.Team(1).Skater') || key.startsWith('ScoreBoard.Team(2).Skater')) {
+                                                var parsedKey = parseFieldsFromKey (key);
+                                                var skaterNotFound = true;
+                                                var team = parsedKey['Team'];
+                                                for (i = 0; i < skaterDb[team].length; i++) {
+                                                    if (skaterDb[team][i]['SkaterId'] == parsedKey['Skater']) {
+                                                        skaterNotFound = false;
+                                                        skaterDb[team][i][parsedKey['LastKey']] = value;
+                                                        break;
+                                                    }
+                                                }
+                                                if (skaterNotFound) {
+                                                    skaterDb[team].push({'SkaterId':parsedKey['Skater']});
+                                                    // search for record once again, to make sure there are no simultaneous writes
+                                                    for (i = 0; i < skaterDb[team].length; i++) {
+                                                        if (skaterDb[team][i]['SkaterId'] == parsedKey['Skater']) {   
+                                                            skaterDb[team][i][parsedKey['LastKey']] = value;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            } else if (key.startsWith('ScoreBoard.Stats.Period') && key.endsWith('Position') && value == 'Jammer') {
+                                                var parsedKey = parseFieldsFromKey(key);
+                                                                                                
+                                                if (    (parsedKey['Period']    == currentPeriodNumber.toString()) && 
+                                                        (parsedKey['Jam']       == currentJamNumber.toString()   )    ) {
+                                                    
+                                                    var jammerInfo = getSkaterInfo(parsedKey['Skater'], parsedKey['Team']);
+                                                    if (jammerInfo != null) {
+                                                        if ('Number' in jammerInfo && 'Name' in jammerInfo && clockJamRunning) { // scoreboard usually sends these at jam start, but sometimes replays them at lineup. Do not react to the updates that arrive when jam is off
+                                                            if (jammerInfo['Number']!='' && jammerInfo['Name']!='') {
+                                                                var notificationText = (jammerInfo['Number'] +' '+jammerInfo['Name']).substring(0,30).toUpperCase();
+                                                                enqueueAnimation('team' + parsedKey['Team'], 'show', '10', true, notificationText);
+                                                            }
+                                                        }
+                                                        currentJammerId[parsedKey['Team']] = parsedKey['Skater'];
+                                                    }
+                                                }                                               
+                                            } else if (key.startsWith('ScoreBoard.Stats.Period') && key.endsWith('Position') && value == 'Pivot') {
+                                                // Jam-specific skater position update. Look for Pivot
+                                                var parsedKey = parseFieldsFromKey (key);
+                                                currentPivotId[parsedKey['Team']] = parsedKey['Skater'];
+                                                
+                                            } else if (key.startsWith('ScoreBoard.Stats.Period') && key.endsWith('StarPass')) {
+                                                
+                                                var parsedKey = parseFieldsFromKey(key);
+                                                
+                                                $.each(parsedKey, function (pk, pv) {
+                                                });
+                                            
+                                                if ( (parsedKey['Period'] == currentPeriodNumber.toString()) && 
+                                                     (parsedKey['Jam']    == currentJamNumber.toString()   )    ) {                                              
+                                                    var actingJammerId = null;                                               
+                                                                                                        
+                                                    if (value) {
+                                                        actingJammerId = currentPivotId[parsedKey['Team']];
+                                                        gotStarPassThisJam = true;
+                                                    } else {
+                                                        actingJammerId = currentJammerId[parsedKey['Team']];
+                                                    }
+                                                    
+                                                    if (gotStarPassThisJam) { // don't react to a StarPass: false at start of jam
+                                                        var jammerInfo = getSkaterInfo(actingJammerId, parsedKey['Team']);
+                                                        if (jammerInfo != null) {
+                                                            if ('Number' in jammerInfo && 'Name' in jammerInfo) {
+                                                                if (jammerInfo['Number']!='' && jammerInfo['Name']!='') {
+                                                                    var notificationText = (jammerInfo['Number'] +' '+jammerInfo['Name']).substring(0,30).toUpperCase();
+                                                                    enqueueAnimation('team' + parsedKey['Team'], 'show', '3', true, 'STAR PASS');
+                                                                    enqueueAnimation('team' + parsedKey['Team'], 'show', '10', true, notificationText);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                } // if ( (parsedKey['Period'] == currentPeriodNumber.toString()) && ...
+                                                
+                                                
+                                            } //else{
+                                                //DEBUG: raw dump of unhandled keys on overlay background
+                                                //debugDump('unknown key: ' + key + ' : ' + value); 
+                                            //}
+                                                                         
+                                    } // switch (key)
+                                });
+                                break;
+                                
+                            case 'Pong': // got answer to Ping: Scoreboard has not crashed
+                                score.isNotDead = true;
+                                break;
+                                
+                            case 'id': // this element appears when the websocket to scoreboard is first opened
+                                score.isNotDead = true;
+                                score.ws.send(JSON.stringify({"action":"Register","paths":scoreboardInterestingPaths}));
+                                break;
+                                 
+                        } // switch (index)
+                    }); // $.each(JSON.parse(event.data), function( index, record ) ...
+                }; // score.ws.onmessage = function (event)
+                
+                score.ws.onerror = function () {
+                    score.isNotDead = false;
+                    //debugDump('socket error');
+                };
+                
+                score.ws.onclose = function () {
+                    score.isNotDead = false;
+                    //debugDump('closed');
+                };                    
+            } // initialize: function()
+            
+        }; // var score = {...}
+        
+     
+        
+        
+        
+        // Section: Animation stuff
+        
+        function teamLeadPulsate(number){
+            for(i=0;i<2;i++) {
+                $("#team" + number + "Lead").fadeTo(500, 0.5).fadeTo(500, 1.0);
+            }
+        }
+        
+        function teamLeadHide(number){
+            $("#team" + number + "Lead").hide();
+        }
+        
+        var animationQueue = {
+            'team1':  {'holdtime':0, 'open':false, 'autoClose': false, 'q':[]},
+            'team2':  {'holdtime':0, 'open':false, 'autoClose': false, 'q':[]},
+            'clock':  {'holdtime':0, 'open':false, 'autoClose': false, 'q':[]},
+            'sponsor':{'holdtime':0, 'open':false, 'autoClose': false, 'q':[]},
+            'timeout':{'holdtime':0, 'open':false, 'autoClose': false, 'q':[]}, };
+        
+        function enqueueAnimation (element, action, holdtime, autoClose, text) {
+            animationQueue[element]['q'].push( {'action':action, 'holdtime':holdtime, 'autoClose':autoClose, 'text':text} );
+        };
+        
+        function getNextAnimation(element) {
+            if (animationQueue[element]['q'].length > 0 ) {
+                return animationQueue[element]['q'].shift();
+            }
+            return null;
+        };
+        
+        function playAnimation(element, animation) {
+            switch (element) {
+                case 'team1':
+                case 'team2': 
+                    var teamNum = element[4];
+                    if (animation['action']=='show') {
+                        var popUpWidth = "400px";
+                        if (animation['text'][0]=='(') {
+                            popUpWidth = "150px";
+                        }
+                        $("#team" + teamNum + "InfoPopUp").animate({width: popUpWidth},
+                            400, function() {
+                                $("#team" + teamNum + "InfoText").html(animation['text']);
+                                $("#team" + teamNum + "InfoText").show(200);  
+                        });
+                        animationQueue['team'+teamNum]['holdtime'] = animation['holdtime'];
+                    } else if (animationQueue['team'+teamNum]['open']){
+                        $("#team" + teamNum + "InfoText").hide(
+                        200, function(){
+                            $("#team" + teamNum + "InfoPopUp").animate({width: "0px"}, 200);                
+                        });
+                    }
+                    break;
+                case 'clock':
+                    if (animation['action']=='show') {
+                        $("#lineUpPopUpText").html(animation['text']);
+                        $("#lineUpPopUp").animate({height: "40px"},
+                            400, function() {
+                                $("#lineUpPopUpText").show(200);  
+                        });
+                    } else if (animationQueue['clock']['open']){
+                        $("#lineUpPopUpText").hide(
+                        200, function(){
+                            $("#lineUpPopUp").animate({height: "0px"}, 200);
+                        }); 
+                    }
+                    break;
+                case 'sponsor':
+                    if (animation['action']=='show') {
+                    } else {
+                    }
+                    break;
+                case 'timeout':
+                    if (animation['action']=='show') {
+                        $("#timeoutBannerShard1").animate({width: "100%"},
+                            400, function() {});
+                        $("#timeoutBannerShard2").animate({width: "100%"},
+                            400, function() {});
+                        $("#timeoutBannerShard3").animate({width: "100%"},
+                            400, function() {});
+                        $("#timeoutBannerShard4").animate({width: "100%"},
+                            400, function() {
+                                $("#timeoutBannerText").html(animation['text']).promise().done(function() {
+                                    $("#timeoutBannerText").show(200);
+                                });
+                                if(gameHasTimeoutSponsors) {
+                                    $("#sponsorBannerShard1").animate({width: "100%"},
+                                        400, function() {});
+                                    $("#sponsorBannerShard2").animate({width: "100%"},
+                                        400, function() {});
+                                    $("#sponsorBannerShard3").animate({width: "100%"},
+                                        400, function() {});
+                                    $("#sponsorBannerShard4").animate({width: "100%"},
+                                        400, function() {
+                                            $("#sponsorBannerText").html(sponsorContentHtml).promise().done(function() {
+                                                $("#sponsorBannerText").show(200);
+                                            });
+                                    });
+                                }
+                        });
+                        animationQueue['timeout']['holdtime'] = animation['holdtime'];
+                    } else if (animationQueue['timeout']['open']){
+                        $("#timeoutBannerText").hide(
+                        200, function(){
+                            $("#timeoutBannerText").html("");
+                            $("#timeoutBannerShard1").animate({width: "0%"}, 200);
+                            $("#timeoutBannerShard2").animate({width: "0%"}, 200);
+                            $("#timeoutBannerShard3").animate({width: "0%"}, 200);
+                            $("#timeoutBannerShard4").animate({width: "0%"}, 200, 
+                                function() {
+                                    if(gameHasTimeoutSponsors) {
+                                        $("#sponsorBannerText").hide(200, 
+                                            function() {
+                                                $("#sponsorBannerShard1").animate({width: "0%"}, 200);
+                                                $("#sponsorBannerShard2").animate({width: "0%"}, 200);
+                                                $("#sponsorBannerShard3").animate({width: "0%"}, 200);
+                                                $("#sponsorBannerShard4").animate({width: "0%"}, 200);
+                                            });
+                                    }
+                            });
+                        }); 
+                    }
+                    break;
+            }  // switch (element)
+            animationQueue[element]['open']      = (animation['action']=='show');
+            animationQueue[element]['autoClose'] = animation['autoClose'];
+        };
+                
+        // main loop to send keepalives and rebuild connection to scoreboard if dead
+        setInterval(function() {            
+            if (score.isNotDead) {
+                // scoreboard will prove it is still alive by responding to Ping
+                score.isNotDead = false;
+                score.ws.send(JSON.stringify({"action":"Ping"}));
+            } else {
+                score.initialize();
+            };
+        }, 10000); // min requirement by CRG Websocket API spec is 30000ms. Send more frequently for faster rebuild
+        
+        // animation scheduling loop
+        setInterval(function() {
+            if (team1IsLead) {
+                teamLeadPulsate(1);
+                team1WasLead = true;
+            } else if (team1WasLead) {
+                teamLeadHide(1);
+                team1WasLead = false;
+            }
+            
+            if (team2IsLead) {
+                teamLeadPulsate(2);
+                team2WasLead = true;
+            } else if (team2WasLead) {
+                teamLeadHide(2);
+                team2WasLead = false;
+            }
+            
+            if (bannerGotRequestShowOfficialReview) { 
+                showingTeamTimeout[bannerGotRequestTeam] = true;
+                enqueueAnimation('timeout', 'show', '0', false, 'Official review for ' + teamName[bannerGotRequestTeam] );
+            } else if (bannerGotRequestShowTeamTimeout) {
+                showingTeamTimeout[bannerGotRequestTeam] = true;
+                enqueueAnimation('timeout', 'show', '0', false, 'Team timeout for '  + teamName[bannerGotRequestTeam] + '. Remaining: ' + teamTimeoutsRemaining[bannerGotRequestTeam]);
+            } else if (bannerGotRequestShowTimeout) {
+                enqueueAnimation('timeout', 'show', '0', false, 'Official timeout');
+            }
+            
+            // done with these flags, reset them
+            bannerGotRequestShowTimeout         = false;
+            bannerGotRequestShowTeamTimeout     = false;
+            bannerGotRequestShowOfficialReview  = false;
+            bannerGotRequestTeam                = '0';
+                       
+            $.each(animationQueue, function( element, record ) { 
+                if (record['holdtime'] > 0) {
+                    record['holdtime']--;
+                } else { 
+                    if (record['open'] && record['autoClose']) {
+                        if(element[0] == 't') { // team1 or team2
+                            showingJamPoints[element] = false;
+                        }
+                        playAnimation(element, {'action':'hide', 'holdtime':0, 'autoClose':false, 'text':''});
+                    } else {
+                        var nextElementAnimation = getNextAnimation(element);
+                        if (nextElementAnimation != null) {                            
+                            playAnimation(element, nextElementAnimation);
+                            
+                            if(element[0] == 't' && nextElementAnimation['action']=='show' && nextElementAnimation['text'][0]=='(') { // team1 or team2
+                                showingJamPoints[element] = true;
+                            }
+                        }
+                    }                    
+                }
+            });
+                        
+        }, 1000);
+        
+        
+        $(document).ready(function(){
+        
+            $("#team1InfoText").hide();
+            $("#team2InfoText").hide();
+            $("#team1Lead").hide();
+            $("#team2Lead").hide();
+            $("#lineUpPopUpText").hide();
+            $("#timeoutBannerText").hide();
+            $("#sponsorBannerText").hide();
+            //$("#sponsorbanner").hide();
+                        
+            $("#team1Name").html(teamName['1']);
+            $("#team2Name").html(teamName['2']);
+                                   
+            if (!autoLoadTeamLogosBasedOnTeamName) {
+                $("#team1Logo").css("background-image", 'url(' + team1Logo + ')');
+                $("#team2Logo").css("background-image", 'url(' + team2Logo + ')');
+            }
+            
+            if (!autoLoadTeamColoursBasedOnTeamName) {
+                $("#team1Colour").css("background-color", team1DefaultColour);
+                $("#team2Colour").css("background-color", team2DefaultColour);
+                $("#team1Lead").css("color", team1DefaultStarColour);
+                $("#team2Lead").css("color", team2DefaultStarColour);
+                if(doColourLogoBackgrounds) {
+                    $("#team1Logo").css("background-color", team1DefaultColour);
+                    $("#team2Logo").css("background-color", team2DefaultColour);
+                }
+            }
+            
+            if(!doColourLogoBackgrounds) {
+                $("#team1Logo").css("background-color", logoBackgroundDefaultColour);
+                $("#team2Logo").css("background-color", logoBackgroundDefaultColour);
+            }
+            
+            // immediately rebuild connection to scoreboard on page load
+            score.initialize();
+        });
+        
+    </script>
+    
+    <div id=everything>
+    
+    <div id=team1InfoPopUp class="team_info_popup team1_info_popup_position font_style bgcolour-default font-colour-default">
+        <div id=team1InfoText>
+        </div>
+    </div>
+    
+    <div id=team1panel class="team_panel team1_panel_position bgcolour-default font-colour-default">
+        <div id=team1Logo class="team_logo"></div>
+        <div id=team1Colour class="team_colour"></div>
+        <div id=team1Name class="team_name font_style"></div>
+        <div id=team1Score class="team_score font_style colour-scheme-clockface"></div>
+        <div id=team1Lead class="team_lead">★</div>
+    </div>
+    
+    <div id=team2InfoPopUp class="team_info_popup team2_info_popup_position font_style bgcolour-default font-colour-default">
+        <div id=team2InfoText>
+        </div>
+    </div>
+    
+    <div id=team2panel class="team_panel team2_panel_position bgcolour-default font-colour-default">
+        <div id=team2Logo class="team_logo"></div>
+        <div id=team2Colour class="team_colour"></div>
+        <div id=team2Name class="team_name font_style"></div>
+        <div id=team2Score class="team_score font_style colour-scheme-clockface"></div>
+        <div id=team2Lead class="team_lead">★</div>
+    </div>
+    
+    <div id=clocksPanel>
+        <div id=periodPanel class="clock_panel period_panel_position bgcolour-default font-colour-default">
+            <div id=periodClock class="period_clock clock_face font_style colour-scheme-clockface">00:00</div>
+            <div id=periodNumber class="period_number clock_label font_style">P</div>
+        </div>
+        <div id=jamPanel class="clock_panel jam_panel_position bgcolour-default font-colour-default">
+            <div id=jamClock class="jam_clock clock_face font_style colour-scheme-clockface">00:00</div>
+            <div id=jamNumber class="jam_number clock_label font_style">J</div>
+        </div>
+    </div>
+    
+    <div id=lineUpPopUp class="lineup_popup font_style bgcolour-default font-colour-default">
+        <div id=lineUpPopUpText></div>
+    </div>
+    
+    <div id=centeredstuff class="center">
+        <div id =timeoutBanner style="display:inline-block;">
+            <div id =timeoutBannerShard1 class="timeout_banner timeout_banner_shard_1 bgcolour-default font-colour-default"></div>
+            <div id =timeoutBannerShard2 class="timeout_banner timeout_banner_shard_2 bgcolour-default font-colour-default"></div>
+            <div id =timeoutBannerShard3 class="timeout_banner timeout_banner_shard_3 bgcolour-default font-colour-default"></div>
+            <div id =timeoutBannerShard4 class="timeout_banner timeout_banner_shard_4 bgcolour-default font-colour-default"></div>
+        </div>   
+        <div id =sponsorBanner style="display:inline-block;">
+            <div id =sponsorBannerShard1 class="sponsor_banner sponsor_banner_shard_1 bgcolour-default font-colour-default"></div>
+            <div id =sponsorBannerShard2 class="sponsor_banner sponsor_banner_shard_2 bgcolour-default font-colour-default"></div>
+            <div id =sponsorBannerShard3 class="sponsor_banner sponsor_banner_shard_3 bgcolour-default font-colour-default"></div>
+            <div id =sponsorBannerShard4 class="sponsor_banner sponsor_banner_shard_4 bgcolour-default font-colour-default"></div>
+            <div id=sponsorTextContainer class="sponsor_text_container">        
+                <div id=sponsorBannerText class="font_style sponsor_banner_text font-colour-default"></div>
+            <div>
+        </div>  
+    </div>
+    
+    <div id=timeoutTextContainer class="timeout_text_container">        
+        <div id=timeoutBannerText class="font_style timeout_banner_text font-colour-default"></div>
+    <div>
+        
+    </div> <!-- id=everything -->
+</body>
+</html>

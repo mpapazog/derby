@@ -1,0 +1,157 @@
+<!-- Javascript/Websocket/jQuery based roller derby scoreboard overlay for CRG 3.9.5 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scoreboard overlay</title>
+    
+    <style>
+                
+    .chroma-key {
+        background-color: transparent;
+    }
+    
+    .font_style {
+      font-family: "Verdana", Sans-serif;
+      font-weight: "bold";
+    }
+    
+    .colour-scheme-clockface {
+        background-color: #101010;
+        color: white;    
+    }
+    .clock_face {
+		width:800px;
+        height:350px;
+        left: 0px;
+		font-size:200px;
+		text-align:center;
+		line-height: 350px;
+    }
+            
+    </style>
+
+</head>
+<body class="chroma-key">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        
+            // MODIFY THESE VARIABLES TO CHANGE SCRIPT BEHAVIOUR
+        var SCORE_SERVER_IP     = '127.0.0.1', // change this to set scoreboard server IP address
+            SCORE_SERVER_PORT   = '8000', // change this to set scoreboard server TCP port (default: 8000)
+            
+            // modify this to subscribe to a wider or narrower set of scoreboard updates
+            // scoreboardInterestingPaths = ["ScoreBoard"] <== subscribes to more or less everything
+            scoreboardInterestingPaths = [ "ScoreBoard.Clock(Intermission).Time" ];
+            
+        function debugDump(text) {
+            var message = document.createElement('p');
+            var content = document.createTextNode('_______________________________ ' + text);
+            message.appendChild(content);
+            document.body.appendChild(message); 
+        }
+        
+        function debugDumpJson(obj) {
+            $.each(obj, function (k, v) {
+                debugDump(k + ' : ' + v);
+            });
+        }
+        
+        function fancyTimeFormat(time)
+            {   
+                // Hours, minutes and seconds
+                var hrs = ~~(time / 3600);
+                var mins = ~~((time % 3600) / 60);
+                var secs = ~~time % 60;
+
+                // Output like "1:01" or "4:03:59" or "123:03:59"
+                var ret = "";
+
+                if (hrs > 0) {
+                    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+
+                ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+                ret += "" + secs;
+                return ret;
+            };
+                        
+        var score = {
+            ws:          null,     // Websocket will be placed here
+            isNotDead:   false,    // true if no Ping-Pong events have been missed
+            
+            initialize: function() {
+                score.ws = null;
+                score.ws = new WebSocket("ws://" + SCORE_SERVER_IP + ":" + SCORE_SERVER_PORT +"/WS/");
+                
+                score.ws.onmessage = function (event) {
+                    $.each(JSON.parse(event.data), function( index, record ) {                          
+                        switch (index) {
+                            case 'state': // got a scoreboard state change update. Reflect in overlay
+                                $.each(record, function( key, value ) {                    
+                                    switch (key) { // key: scoreboard element that has been updated
+                                        case 'ScoreBoard.Clock(Intermission).Time':
+											$('#jamClock').html(fancyTimeFormat(value/1000));
+                                            break;                                        
+                                        default:
+											//DEBUG: raw dump of unhandled keys on overlay background
+											//debugDump('unknown key: ' + key + ' : ' + value); 
+                                                                         
+                                    } // switch (key)
+                                });
+                                break;
+                                
+                            case 'Pong': // got answer to Ping: Scoreboard has not crashed
+                                score.isNotDead = true;
+                                break;
+                                
+                            case 'id': // this element appears when the websocket to scoreboard is first opened
+                                score.isNotDead = true;
+                                score.ws.send(JSON.stringify({"action":"Register","paths":scoreboardInterestingPaths}));
+                                break;
+                                 
+                        } // switch (index)
+                    }); // $.each(JSON.parse(event.data), function( index, record ) ...
+                }; // score.ws.onmessage = function (event)
+                
+                score.ws.onerror = function () {
+                    score.isNotDead = false;
+                    //debugDump('socket error');
+                };
+                
+                score.ws.onclose = function () {
+                    score.isNotDead = false;
+                    //debugDump('closed');
+                };                    
+            } // initialize: function()
+            
+        }; // var score = {...}
+        
+             
+        // main loop to send keepalives and rebuild connection to scoreboard if dead
+        setInterval(function() {            
+            if (score.isNotDead) {
+                // scoreboard will prove it is still alive by responding to Ping
+                score.isNotDead = false;
+                score.ws.send(JSON.stringify({"action":"Ping"}));
+            } else {
+                score.initialize();
+            };
+        }, 10000); // min requirement by CRG Websocket API spec is 30000ms. Send more frequently for faster rebuild
+        
+        $(document).ready(function(){
+            // immediately rebuild connection to scoreboard on page load
+            score.initialize();
+        });
+        
+    </script>
+    
+    <div id=everything>
+    
+    <div id=jamClock class="jam_clock clock_face font_style colour-scheme-clockface"></div>
+        
+    </div> <!-- id=everything -->
+</body>
+</html>

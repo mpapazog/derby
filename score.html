@@ -1,0 +1,586 @@
+<!-- Javascript/Websocket/jQuery based roller derby scoreboard overlay for CRG 3.9.5 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scoreboard overlay</title>
+    
+    <style>
+                
+    .chroma-key {
+        background-color: transparent;
+    }
+    
+    .font_style {
+      font-family: "Verdana", Sans-serif;
+      font-weight: "bold";
+    }
+        
+    .bgcolour-default {
+        background-color: #0196b6;
+    }
+    
+    .font-colour-default{
+        color: white;    
+    }    
+    
+    .colour-scheme-clockface {
+        background-color: #101010;
+        color: white;    
+    }
+        
+    .team_panel {
+        width:  324px;
+        height: 60px;
+        line-height: 60px;
+        position: inherit;
+    }
+        
+    .team1_panel_position {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    
+    .team2_panel_position {
+      position: absolute;
+      top: 70px;
+      left: 10px;
+    }
+    
+    .team_logo {
+      width: 60px;
+      height: 60px;
+      position: inherit;
+      background-size: 100% 100%;
+    }
+    
+    .team_colour {
+      width: 24px;
+      height: 60px;
+      position: inherit;
+      left: 60px;
+    }
+        
+    .team_name {
+      width: 180px;
+      height: 60px;
+      position: inherit;
+      left: 64px;
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    .team_score {
+      width: 120px;
+      height: 60px;
+      position: inherit;
+      left: 244px;
+      font-size: 48px;
+      text-align: center;
+    }
+    
+    .team_lead {
+      width: 10px;
+      height: 10px;
+      position: inherit;
+      left: 62px;
+      top: 0px;
+      font-size: 24px;
+      font-family: "Arial", Sans-serif;
+      text-shadow: 2px 2px grey;
+      text-align: center;
+      line-height: 60px;
+    }
+    
+    .team_info_popup {
+        width:  000px;
+        height: 56px;
+        left: 384px;
+        font-size: 20px;
+        text-align: center;
+        line-height: 56px;
+    }
+    
+    
+    .team1_info_popup_position {
+        position: absolute;
+        top: 13px;
+    }
+    
+    .team2_info_popup_position {
+        position: absolute;
+        top: 73px;
+    }
+    
+    .clock_panel {
+        width:  160px;
+        height: 60px;
+        line-height: 60px;
+    }
+    
+    .period_panel_position {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    
+    .jam_panel_position {
+      position: absolute;
+      top: 70px;
+      right: 10px;
+    }
+    
+    .clock_face {
+        width: 100px;
+        height:60px;
+        right: 0px;
+        position: inherit;
+        font-size: 24px;
+        text-align: center;
+    }
+    
+    .clock_label {
+        width: 60px;
+        position: inherit;
+        right: 100px;
+        font-size: 24px;
+        text-align: center;
+    }
+    
+    .vert_align_middle {
+        line-height: 60px;
+    }
+    
+    .lineup_popup {
+        width:  156px;
+        height: 000px;
+        font-size: 20px;
+        position: absolute;
+        right: 12px;
+        top: 130px;
+        text-align: center;
+        line-height: 40px;
+    }
+    
+    
+    .center {
+        text-align: center;
+    }
+        
+    .timeout_banner {
+        position:absolute;
+        width: 100%;
+    }
+    
+    .timeout_banner_shard_1 {
+        height:20px;
+        left: 0px;
+        bottom: 260px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_2 {
+        position:absolute;
+        height:22px;
+        right: 0px;
+        bottom: 240px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_3 {
+        position:absolute;
+        height:22px;
+        left: 0px;
+        bottom: 220px;
+        width: 0%;
+    }
+    
+    .timeout_banner_shard_4 {
+        position:absolute;
+        height:22px;
+        right: 0px;
+        bottom: 200px;
+        width: 0%;
+    }
+    
+    .timeout_text_container {
+        text-align:center;
+        position:absolute;
+        bottom:200px;
+        left:0px;
+        width:100%;
+    }
+    
+    .timeout_banner_text {
+      font-size: 36px;
+      line-height: 80px;
+      display:inline-block;
+    }
+    
+    .sponsor_banner {
+        position:absolute;
+        width: 100%;
+    }
+    
+    .sponsor_banner_shard_1 {
+        height:60px;
+        left: 0px;
+        bottom: 130px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_2 {
+        position:absolute;
+        height:42px;
+        right: 0px;
+        bottom: 90px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_3 {
+        position:absolute;
+        height:42px;
+        left: 0px;
+        bottom: 50px;
+        width: 0%;
+    }
+    
+    .sponsor_banner_shard_4 {
+        position:absolute;
+        height:42px;
+        right: 0px;
+        bottom: 10px;
+        width: 0%;
+    }
+    
+    .sponsor_text_container {
+        text-align:center;
+        position:absolute;
+        bottom:20px;
+        left:0px;
+        height:160px;
+        width:100%;
+    }
+    
+    .sponsor_banner_text {
+      font-size: 60px;
+      line-height: 160px;
+      display:inline-block;
+    }
+    
+            
+    </style>
+
+</head>
+<body class="chroma-key">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type=text/javascript>
+       
+            // MODIFY THESE VARIABLES TO CHANGE SCRIPT BEHAVIOUR
+        var SCORE_SERVER_IP     = '127.0.0.1', // change this to set scoreboard server IP address
+            SCORE_SERVER_PORT   = '8000', // change this to set scoreboard server TCP port (default: 8000)
+            
+            // modify this to subscribe to a wider or narrower set of scoreboard updates
+            // scoreboardInterestingPaths = ["ScoreBoard"] <== subscribes to more or less everything
+            scoreboardInterestingPaths = [ "ScoreBoard.Team(1).Score", "ScoreBoard.Team(2).Score", "ScoreBoard.Team(1).Name", "ScoreBoard.Team(2).Name" ],
+            
+            gameHasTimeoutSponsors = true,
+            gameHasHalftimeBanners = true,
+            sponsorContentHtml = '<table style="display:inline-block;"><tr><td><img height="150" src="/img/logo_atom_big.jpg"/></td><td><img height="150" src="/img/wikko.jpg"/></td><td><img height="150" src="/img/jitb.png"/></td></tr></table>',
+            
+            // modify these to statically set team names
+            teamName                    = { '1':'', '2':'' },
+            getTeamNameFromScoreboard   = { '1':true,'2':true },
+            
+            // modify these to auto-resolve team names to custom values
+            teamShortNames = {'Glasgow Mens Roller Derby':'GMRD',
+                              'Dirty River Roller Derby':'TURKU',
+                              'Black':'HOWLIN',
+                              'White':'LEEDS'};
+            
+            autoLoadTeamLogosBasedOnTeamName = true,           
+            teamDefaultLogo             = { '1':'/img/team1.png','2':'/img/team2.jpg' },
+            
+            autoLoadTeamColoursBasedOnTeamName = true, 
+            team1DefaultColour = 'black',
+            team2DefaultColour = 'white',
+            team1DefaultStarColour = 'white',
+            team1DefaultStarColour = 'black',
+            doColourLogoBackgrounds = false,
+            // Use HTML colour names: https://www.w3schools.com/colors/colors_names.asp
+            // transparent, black, white, blue, chocolate, blueviolet, darkblue, crimson, forestgreen, mediumaquamarine, orchid, yellow
+            logoBackgroundDefaultColour = 'white',
+            //teamColourMappings = {'teamname':{'teamColour':'colour1', 'starColour':'colour2'}, ...};
+            teamColourMappings = {  'BLACK':    {'teamColour':'black',          'starColour':'white'},
+                                    'WHITE':    {'teamColour':'white',          'starColour':'black'},
+                                    'KALLIO':   {'teamColour':'black',          'starColour':'white'},
+                                    'HELSINKI': {'teamColour':'yellow',         'starColour':'black'},
+                                    'TURKU':    {'teamColour':'mediumaquamarine', 'starColour':'white'},
+                                    'PORVOO':   {'teamColour':'darkblue',       'starColour':'white'},
+                                    'OULU':     {'teamColour':'white',          'starColour':'black'},
+                                    'TAMPERE':  {'teamColour':'crimson',        'starColour':'white'},
+                                    'HOWLIN':   {'teamColour':'white',          'starColour':'black'},
+                                    'LEEDS':    {'teamColour':'white',          'starColour':'black'},
+                                    'ROYAL A':  {'teamColour':'gold',           'starColour':'black'},
+                                    'ROYAL B':  {'teamColour':'darkolivegreen', 'starColour':'black'},
+                                    'MANNEKEN': {'teamColour':'purple',         'starColour':'white'}};
+                
+            // DO NOT MODIFY THESE VARIABLES
+        var team1IsLead     = false,
+            team1WasLead    = false,
+            team2IsLead     = false,
+            team2WasLead    = false,
+            teamJamScore    = {'1':0, '2':0},
+            clockJamRunning = false,
+            clockLineUpRunning  = false,
+            clockTimeoutRunning = false,
+            clockIntermissionRunning = false,
+            showingOfficialScore = false,
+            periodTimeLeft = 1800000,
+            
+            currentJammerId = {'1':'', '2':''},
+            currentPivotId  = {'1':'', '2':''},
+            showingJamPoints = {'team1':false, 'team2':false},
+            
+            currentJamNumber        = 0,
+            currentPeriodNumber     = 0,
+            gotStarPassThisJam      = false,
+            gotFirstJamNumberUpdate = false,
+            gotSecondJamNumberUpdate = false,
+            
+            teamTimeoutsRemaining   = {'1':3, '2':3 },
+            showingOfficialReview   = false,
+            showingTeamTimeout      = {'1':false,
+                                       '2':false },
+            
+            bannerGotRequestShowTimeout         = false,
+            bannerGotRequestShowTeamTimeout     = false,
+            bannerGotRequestShowOfficialReview  = false,
+            bannerGotRequestTeam                = '0',
+                                    
+            skaterDb    = { '1': [], '2': []};
+          
+          
+        function debugDump(text) {
+            var message = document.createElement('p');
+            var content = document.createTextNode('_______________________________ ' + text);
+            message.appendChild(content);
+            document.body.appendChild(message); 
+        }
+        
+        function debugDumpJson(obj) {
+            $.each(obj, function (k, v) {
+                debugDump(k + ' : ' + v);
+            });
+        }
+        
+        function autoFetchTeamLogo(teamName, teamNumber, fallBackLogo) {
+            var teamNameLowerCase = teamName.toLowerCase().replace(/\s+/g, '_');        
+            var image_url = "/img/" + teamNameLowerCase + ".jpg";
+            $.get(image_url)
+                .done(function() { 
+                    $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                  
+                }).fail(function() { 
+                    image_url = "/img/" + teamNameLowerCase + ".png";
+                    $.get(image_url)
+                        .done(function() { 
+                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');               
+                        }).fail(function() { 
+                            image_url = "/img/" + teamNameLowerCase + ".gif";
+                            $.get(image_url)
+                                .done(function() { 
+                                    $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                    
+                                }).fail(function() { 
+                                    image_url = "/img/" + teamNameLowerCase + ".bmp";
+                                    $.get(image_url)
+                                        .done(function() { 
+                                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + image_url + ')');                     
+                                        }).fail(function() { 
+                                            $("#team" + teamNumber + "Logo").css("background-image", 'url(' + fallBackLogo + ')');  
+                                        })
+                                })
+                        })
+                })
+        }
+        
+        
+        function getSkaterInfo(id, team) {
+            for (i = 0; i < skaterDb[team].length; i++) {
+                if (skaterDb[team][i]['SkaterId'] == id) {   
+                    return skaterDb[team][i];
+                }
+            }
+            return null;
+        }
+        
+        function parseFieldsFromKey (key) {
+            var splitStr = key.split('.');
+            var ret = {};
+            
+            for(i=0;i<splitStr.length;i++) {
+                var value       = null;
+                var valueStart  = splitStr[i].indexOf('(') + 1;
+                var indexEnd    = splitStr[i].length;
+                if (valueStart != 0) {
+                    var valueLength = splitStr[i].length - valueStart - 1;
+                    value       = splitStr[i].substr(valueStart, valueLength);
+                    indexEnd    = valueStart - 1;
+                }
+                var index = splitStr[i].substr(0, indexEnd);
+                ret[index] = value;
+                ret['LastKey'] = index; // note what was the final section of the key. This is usually the important one
+            }
+            
+            return(ret);
+        }
+        
+        function fancyTimeFormat(time)
+            {   
+                // Hours, minutes and seconds
+                var hrs = ~~(time / 3600);
+                var mins = ~~((time % 3600) / 60);
+                var secs = ~~time % 60;
+
+                // Output like "1:01" or "4:03:59" or "123:03:59"
+                var ret = "";
+
+                if (hrs > 0) {
+                    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+
+                ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+                ret += "" + secs;
+                return ret;
+            };
+                        
+        var score = {
+            ws:          null,     // Websocket will be placed here
+            isNotDead:   false,    // true if no Ping-Pong events have been missed
+            
+            initialize: function() {
+                score.ws = null;
+                score.ws = new WebSocket("ws://" + SCORE_SERVER_IP + ":" + SCORE_SERVER_PORT +"/WS/");
+                
+                score.ws.onmessage = function (event) {
+                    $.each(JSON.parse(event.data), function( index, record ) {                          
+                        switch (index) {
+                            case 'state': // got a scoreboard state change update. Reflect in overlay
+                                $.each(record, function( key, value ) {                    
+                                    switch (key) { // key: scoreboard element that has been updated
+                                        case 'ScoreBoard.Team(1).Score': 
+                                        case 'ScoreBoard.Team(2).Score':   
+                                            var teamNumber = key[16];
+                                            $('#team' + teamNumber + 'Score').html(value);
+                                            break;
+                                        case 'ScoreBoard.Team(1).Name':
+                                        case 'ScoreBoard.Team(2).Name':
+                                            var teamNum = key[16];
+                                            if (getTeamNameFromScoreboard[teamNum]) {
+                                                if (value in teamShortNames) {
+                                                    teamName[teamNum] = teamShortNames[value];
+                                                } else {
+                                                    teamName[teamNum] = value.split(' ')[0].toUpperCase();
+                                                }
+                                                $('#team' + teamNum + 'Name').html(teamName[teamNum].substr(0,9));
+                                                if (autoLoadTeamLogosBasedOnTeamName) {
+                                                    autoFetchTeamLogo(teamName[teamNum], teamNum, teamDefaultLogo[teamNum]);
+                                                }
+                                                if (autoLoadTeamColoursBasedOnTeamName) {
+                                                    if (teamName[teamNum] in teamColourMappings) {
+                                                        $("#team" + teamNum + "Colour").css("background-color", teamColourMappings[teamName[teamNum]]['teamColour']);
+                                                        $("#team" + teamNum + "Lead").css("color", teamColourMappings[teamName[teamNum]]['starColour']);
+                                                        if(doColourLogoBackgrounds) {
+                                                            $("#team" + teamNum + "Logo").css("background-color", teamColourMappings[teamName[teamNum]]['teamColour']);
+                                                        }
+                                                    } else {
+                                                        $("#team" + teamNum + "Colour").css("background-color", "transparent");
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        default:
+											//DEBUG: raw dump of unhandled keys on overlay background
+											//debugDump('unknown key: ' + key + ' : ' + value); 
+                                                                         
+                                    } // switch (key)
+                                });
+                                break;
+                                
+                            case 'Pong': // got answer to Ping: Scoreboard has not crashed
+                                score.isNotDead = true;
+                                break;
+                                
+                            case 'id': // this element appears when the websocket to scoreboard is first opened
+                                score.isNotDead = true;
+                                score.ws.send(JSON.stringify({"action":"Register","paths":scoreboardInterestingPaths}));
+                                break;
+                                 
+                        } // switch (index)
+                    }); // $.each(JSON.parse(event.data), function( index, record ) ...
+                }; // score.ws.onmessage = function (event)
+                
+                score.ws.onerror = function () {
+                    score.isNotDead = false;
+                    //debugDump('socket error');
+                };
+                
+                score.ws.onclose = function () {
+                    score.isNotDead = false;
+                    //debugDump('closed');
+                };                    
+            } // initialize: function()
+            
+        }; // var score = {...}
+                
+        $(document).ready(function(){
+                                
+            $("#team1Name").html(teamName['1']);
+            $("#team2Name").html(teamName['2']);
+                                   
+            if (!autoLoadTeamLogosBasedOnTeamName) {
+                $("#team1Logo").css("background-image", 'url(' + team1Logo + ')');
+                $("#team2Logo").css("background-image", 'url(' + team2Logo + ')');
+            }
+            
+            if (!autoLoadTeamColoursBasedOnTeamName) {
+                $("#team1Colour").css("background-color", team1DefaultColour);
+                $("#team2Colour").css("background-color", team2DefaultColour);
+                $("#team1Lead").css("color", team1DefaultStarColour);
+                $("#team2Lead").css("color", team2DefaultStarColour);
+                if(doColourLogoBackgrounds) {
+                    $("#team1Logo").css("background-color", team1DefaultColour);
+                    $("#team2Logo").css("background-color", team2DefaultColour);
+                }
+            }
+            
+            if(!doColourLogoBackgrounds) {
+                $("#team1Logo").css("background-color", logoBackgroundDefaultColour);
+                $("#team2Logo").css("background-color", logoBackgroundDefaultColour);
+            }
+            
+            // immediately rebuild connection to scoreboard on page load
+            score.initialize();
+        });
+        
+    </script>
+    
+    <div id=everything>
+    
+    <div id=team1panel class="team_panel team1_panel_position bgcolour-default font-colour-default">
+        <div id=team1Logo class="team_logo"></div>
+        <div id=team1Name class="team_name font_style"></div>
+        <div id=team1Score class="team_score font_style colour-scheme-clockface"></div>
+    </div>
+    
+    <div id=team2panel class="team_panel team2_panel_position bgcolour-default font-colour-default">
+        <div id=team2Logo class="team_logo"></div>
+        <div id=team2Name class="team_name font_style"></div>
+        <div id=team2Score class="team_score font_style colour-scheme-clockface"></div>
+    </div>
+    
+    </div> <!-- id=everything -->
+</body>
+</html>
